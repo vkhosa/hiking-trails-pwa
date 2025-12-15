@@ -236,7 +236,7 @@
     }
 
     // Fetch Excel file from GitHub
-    fetch("https://raw.githubusercontent.com/vkhosa/hiking-trails-pwa/main/HikingGauteng.xlsx")
+    fetch("https://raw.githubusercontent.com/vkhosa/hiking-trails-pwa/main/trails.xlsx")
       .then(res => res.arrayBuffer())
       .then(buffer => {
         const wb = XLSX.read(buffer, { type: "array" });
