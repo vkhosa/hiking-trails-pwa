@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -36,7 +36,6 @@
       margin-bottom: 6px;
     }
 
-    /* Contact icons */
     .contact {
       text-align: center;
       margin-bottom: 15px;
@@ -108,7 +107,6 @@
 <body>
   <h1>Hiking Trails in Gauteng & North West</h1>
 
-  <!-- Contact Icons -->
   <div class="contact">
     <a href="https://wa.me/27733242619" target="_blank" title="WhatsApp">
       <i class="fab fa-whatsapp"></i>
@@ -124,7 +122,6 @@
     </a>
   </div>
 
-  <!-- Website Rating -->
   <div class="rating-summary">
     ⭐ <strong>4.6 / 5</strong> <span>(128 reviews)</span>
   </div>
@@ -238,13 +235,18 @@
       areaFilter.innerHTML = areas.map(a => `<option>${a}</option>`).join("");
     }
 
-    fetch("HikingGauteng.xlsx")
+    // Fetch Excel file from GitHub
+    fetch("https://raw.githubusercontent.com/vkhosa/hiking-trails-pwa/main/HikingGauteng.xlsx")
       .then(res => res.arrayBuffer())
       .then(buffer => {
         const wb = XLSX.read(buffer, { type: "array" });
         trails = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
         updateFilters();
         renderTable();
+      })
+      .catch(err => {
+        console.error("Failed to load Excel file:", err);
+        document.getElementById("trailTable").innerHTML = `<tr><td colspan="3">Failed to load trail data.</td></tr>`;
       });
 
     document.getElementById("areaFilter").onchange = e => {
