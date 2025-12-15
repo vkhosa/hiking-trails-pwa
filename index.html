@@ -45,15 +45,11 @@
       margin: 0 15px;
       color: var(--green-main);
       text-decoration: none;
-      font-weight: 600;
+      font-size: 24px;
     }
 
     .contact a:hover {
       color: var(--green-accent);
-    }
-
-    .contact i {
-      margin-right: 6px;
     }
 
     /* Controls */
@@ -65,7 +61,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
-    select, input[type="text"], input[type="file"] {
+    select, input[type="text"] {
       padding: 6px;
       margin: 6px 5px 6px 0;
       border: 1px solid #c8e6c9;
@@ -113,8 +109,8 @@
 
     @media (max-width: 600px) {
       .contact a {
-        display: block;
-        margin: 8px 0;
+        display: inline-block;
+        margin: 8px 5px;
       }
     }
   </style>
@@ -126,22 +122,23 @@
   <!-- Contact Section -->
   <div class="contact">
     <a href="https://wa.me/27733242619" target="_blank">
-      <i class="fab fa-whatsapp"></i> 073****619
+      <i class="fab fa-whatsapp"></i>
     </a>
 
     <a href="mailto:vukosikhosa@gmail.com">
-      <i class="fas fa-envelope"></i> vuko****@gmail.com
+      <i class="fas fa-envelope"></i>
     </a>
 
     <a href="https://www.instagram.com/the_hiking_Dr" target="_blank">
-      <i class="fab fa-instagram"></i> the_hik***_Dr
+      <i class="fab fa-instagram"></i>
+    </a>
+
+    <a href="https://www.youtube.com/@my_outdoor_adventures" target="_blank">
+      <i class="fab fa-youtube"></i>
     </a>
   </div>
 
   <div class="controls">
-    <input type="file" id="upload" accept=".xlsx, .xls" />
-    <br>
-
     <label for="areaFilter">Filter by Area:</label>
     <select id="areaFilter">
       <option value="All">All</option>
@@ -240,11 +237,7 @@
       renderTable();
     });
 
-    document.getElementById("upload").addEventListener("change", e => {
-      const file = e.target.files[0];
-      if (file) loadExcelFile(file, true);
-    });
-
+    // Load Excel from server
     loadExcelFile("trails.xlsx");
   </script>
 </body>
