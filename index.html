@@ -238,75 +238,13 @@
       areaFilter.innerHTML = areas.map(a => `<option>${a}</option>`).join("");
     }
 
-  let trails = [];
-  let currentFilter = "All";
-  let currentSearch = "";
-
-  function renderTable() {
-    const tableBody = document.getElementById("trailTable");
-    tableBody.innerHTML = "";
-
-    let filtered = trails;
-
-    if (currentFilter !== "All") {
-      filtered = filtered.filter(t => t.Area === currentFilter);
-    }
-
-    if (currentSearch) {
-      filtered = filtered.filter(t =>
-        t.Name.toLowerCase().includes(currentSearch.toLowerCase())
-      );
-    }
-
-    if (filtered.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="3">No trails found.</td></tr>`;
-      return;
-    }
-
-    filtered.forEach(t => {
-      tableBody.innerHTML += `
-        <tr>
-          <td>${t.Name}</td>
-          <td><a href="${t.Website}" target="_blank">Visit</a></td>
-          <td>${t.Area}</td>
-        </tr>
-      `;
-    });
-  }
-
-  function updateFilters() {
-    const areaFilter = document.getElementById("areaFilter");
-    const areas = ["All", ...new Set(trails.map(t => t.Area))];
-    areaFilter.innerHTML = areas.map(a => `<option>${a}</option>`).join("");
-  }
-
-  /* 🔥 LOAD EXCEL FROM GITHUB */
-  fetch("https://raw.githubusercontent.com/vkhosa/hiking-trails-pwa/HikingGauteng.xlsx")
-    .then(res => res.arrayBuffer())
-    .then(buffer => {
-      const wb = XLSX.read(buffer, { type: "array" });
-      trails = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-      updateFilters();
-      renderTable();
-    })
-    .catch(err => {
-      console.error("Failed to load Excel from GitHub", err);
-    });
-
-  document.getElementById("areaFilter").onchange = e => {
-    currentFilter = e.target.value;
-    renderTable();
-  };
-
-  document.getElementById("searchBox").oninput = e => {
-    currentSearch = e.target.value;
-    renderTable();
-  };
-
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
-  }
-
+    fetch("HikingGauteng.xlsx")
+      .then(res => res.arrayBuffer())
+      .then(buffer => {
+        const wb = XLSX.read(buffer, { type: "array" });
+        trails = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+        updateFilters();
+        renderTable();
       });
 
     document.getElementById("areaFilter").onchange = e => {
