@@ -1,18 +1,13 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hiking Trails - Gauteng & North West</title>
 
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#2e7d32">
-
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- XLSX -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
@@ -36,9 +31,10 @@
       margin-bottom: 6px;
     }
 
+    /* Contact bar */
     .contact {
       text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: 25px;
       padding: 10px;
       background: white;
       border-radius: 8px;
@@ -46,23 +42,21 @@
     }
 
     .contact a {
-      margin: 0 14px;
-      font-size: 22px;
+      margin: 0 15px;
       color: var(--green-main);
       text-decoration: none;
+      font-weight: 600;
     }
 
     .contact a:hover {
       color: var(--green-accent);
     }
 
-    .rating-summary {
-      text-align: center;
-      margin-bottom: 15px;
-      font-size: 18px;
-      color: var(--green-dark);
+    .contact i {
+      margin-right: 6px;
     }
 
+    /* Controls */
     .controls {
       margin-bottom: 15px;
       background: white;
@@ -71,13 +65,19 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
-    select, input[type="text"] {
+    select, input[type="text"], input[type="file"] {
       padding: 6px;
       margin: 6px 5px 6px 0;
       border: 1px solid #c8e6c9;
       border-radius: 5px;
     }
 
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--green-main);
+    }
+
+    /* Table */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -101,64 +101,62 @@
     tr:hover {
       background-color: var(--green-light);
     }
+
+    a {
+      color: var(--green-main);
+      font-weight: 600;
+    }
+
+    a:hover {
+      color: var(--green-accent);
+    }
+
+    @media (max-width: 600px) {
+      .contact a {
+        display: block;
+        margin: 8px 0;
+      }
+    }
   </style>
 </head>
 
 <body>
   <h1>Hiking Trails in Gauteng & North West</h1>
 
+  <!-- Contact Section -->
   <div class="contact">
-    <a href="https://wa.me/27733242619" target="_blank" title="WhatsApp">
-      <i class="fab fa-whatsapp"></i>
+    <a href="https://wa.me/27733242619" target="_blank">
+      <i class="fab fa-whatsapp"></i> 073****619
     </a>
-    <a href="mailto:vukosikhosa@gmail.com" title="Email">
-      <i class="fas fa-envelope"></i>
-    </a>
-    <a href="https://www.instagram.com/the_hiking_Dr" target="_blank" title="Instagram">
-      <i class="fab fa-instagram"></i>
-    </a>
-    <a href="https://www.youtube.com/@my_outdoor_adventures" target="_blank" title="YouTube">
-      <i class="fab fa-youtube"></i>
-    </a>
-  </div>
 
-  <div class="rating-summary">
-    ⭐ <strong>4.6 / 5</strong> <span>(128 reviews)</span>
+    <a href="mailto:vukosikhosa@gmail.com">
+      <i class="fas fa-envelope"></i> vuko****@gmail.com
+    </a>
+
+    <a href="https://www.instagram.com/the_hiking_Dr" target="_blank">
+      <i class="fab fa-instagram"></i> the_hik***_Dr
+    </a>
   </div>
 
   <div class="controls">
-    <label for="areaFilter">Area:</label>
+    <input type="file" id="upload" accept=".xlsx, .xls" />
+    <br>
+
+    <label for="areaFilter">Filter by Area:</label>
     <select id="areaFilter">
       <option value="All">All</option>
     </select>
 
-    <!-- FUTURE UPGRADE: Difficulty filter
-    <label for="difficultyFilter">Difficulty:</label>
-    <select id="difficultyFilter">
-      <option value="All">All</option>
-      <option value="Easy">Easy</option>
-      <option value="Moderate">Moderate</option>
-      <option value="Hard">Hard</option>
-    </select>
-    -->
-
-    <label for="searchBox">Search:</label>
-    <input type="text" id="searchBox" placeholder="Trail name..." />
+    <label for="searchBox">Search by Name:</label>
+    <input type="text" id="searchBox" placeholder="Enter trail name..." />
   </div>
 
   <table>
     <thead>
       <tr>
-        <th>Trail</th>
+        <th>Trail Name</th>
         <th>Website</th>
         <th>Area</th>
-
-        <!-- FUTURE UPGRADE
-        <th>Difficulty</th>
-        <th>Distance (km)</th>
-        <th>Elevation (m)</th>
-        <th>Navigate</th>
-        -->
       </tr>
     </thead>
     <tbody id="trailTable"></tbody>
@@ -169,27 +167,15 @@
     let currentFilter = "All";
     let currentSearch = "";
 
-    // FUTURE UPGRADE
-    // let currentDifficulty = "All";
-
     function renderTable() {
       const tableBody = document.getElementById("trailTable");
       tableBody.innerHTML = "";
 
-      let filtered = trails;
+      let filtered = currentFilter === "All"
+        ? trails
+        : trails.filter(t => t.Area === currentFilter);
 
-      if (currentFilter !== "All") {
-        filtered = filtered.filter(t => t.Area === currentFilter);
-      }
-
-      /*
-      FUTURE UPGRADE
-      if (currentDifficulty !== "All") {
-        filtered = filtered.filter(t => t.Difficulty === currentDifficulty);
-      }
-      */
-
-      if (currentSearch) {
+      if (currentSearch.trim() !== "") {
         filtered = filtered.filter(t =>
           t.Name.toLowerCase().includes(currentSearch.toLowerCase())
         );
@@ -201,67 +187,65 @@
       }
 
       filtered.forEach(t => {
-        /*
-        FUTURE UPGRADE
-        const diffClass =
-          t.Difficulty === "Easy" ? "easy" :
-          t.Difficulty === "Moderate" ? "moderate" : "hard";
-
-        const navUrl = t.Latitude && t.Longitude
-          ? `https://www.google.com/maps/dir/?api=1&destination=${t.Latitude},${t.Longitude}`
-          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(t.Name)}`;
-        */
-
-        tableBody.innerHTML += `
-          <tr>
-            <td>${t.Name}</td>
-            <td><a href="${t.Website}" target="_blank">Visit</a></td>
-            <td>${t.Area}</td>
-
-            <!-- FUTURE UPGRADE
-            <td>${t.Difficulty}</td>
-            <td>${t["Distance (km)"]}</td>
-            <td>${t["Elevation (m)"]}</td>
-            <td><a href="${navUrl}" target="_blank">🧭</a></td>
-            -->
-          </tr>
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${t.Name}</td>
+          <td><a href="${t.Website}" target="_blank">Visit</a></td>
+          <td>${t.Area}</td>
         `;
+        tableBody.appendChild(row);
       });
     }
 
-    function updateFilters() {
-      const areaFilter = document.getElementById("areaFilter");
+    function updateFilterOptions() {
+      const filterSelect = document.getElementById("areaFilter");
       const areas = ["All", ...new Set(trails.map(t => t.Area))];
-      areaFilter.innerHTML = areas.map(a => `<option>${a}</option>`).join("");
+      filterSelect.innerHTML = "";
+      areas.forEach(area => {
+        const opt = document.createElement("option");
+        opt.value = area;
+        opt.textContent = area;
+        filterSelect.appendChild(opt);
+      });
     }
 
-    // Fetch Excel file from GitHub
-    fetch("https://raw.githubusercontent.com/vkhosa/hiking-trails-pwa/main/trails.xlsx")
-      .then(res => res.arrayBuffer())
-      .then(buffer => {
-        const wb = XLSX.read(buffer, { type: "array" });
-        trails = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-        updateFilters();
-        renderTable();
-      })
-      .catch(err => {
-        console.error("Failed to load Excel file:", err);
-        document.getElementById("trailTable").innerHTML = `<tr><td colspan="3">Failed to load trail data.</td></tr>`;
-      });
+    function loadExcelFile(file, isLocal = false) {
+      if (isLocal) {
+        const reader = new FileReader();
+        reader.onload = evt => processExcel(evt.target.result);
+        reader.readAsArrayBuffer(file);
+      } else {
+        fetch(file)
+          .then(res => res.arrayBuffer())
+          .then(buffer => processExcel(buffer))
+          .catch(err => console.error("Error loading Excel:", err));
+      }
+    }
 
-    document.getElementById("areaFilter").onchange = e => {
+    function processExcel(buffer) {
+      const workbook = XLSX.read(buffer, { type: 'array' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      trails = XLSX.utils.sheet_to_json(sheet);
+      updateFilterOptions();
+      renderTable();
+    }
+
+    document.getElementById("areaFilter").addEventListener("change", e => {
       currentFilter = e.target.value;
       renderTable();
-    };
+    });
 
-    document.getElementById("searchBox").oninput = e => {
+    document.getElementById("searchBox").addEventListener("input", e => {
       currentSearch = e.target.value;
       renderTable();
-    };
+    });
 
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
+    document.getElementById("upload").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (file) loadExcelFile(file, true);
+    });
+
+    loadExcelFile("trails.xlsx");
   </script>
 </body>
 </html>
