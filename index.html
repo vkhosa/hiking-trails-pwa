@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hiking Trails - Gauteng & North West</title>
 
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
   <style>
@@ -22,19 +20,16 @@
       font-family: Arial, sans-serif;
       margin: 20px;
       background-color: var(--green-light);
-      color: #2e2e2e;
     }
 
     h1 {
       text-align: center;
       color: var(--green-dark);
-      margin-bottom: 6px;
     }
 
-    /* Contact bar */
     .contact {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       padding: 10px;
       background: white;
       border-radius: 8px;
@@ -42,49 +37,52 @@
     }
 
     .contact a {
-      margin: 0 15px;
+      margin: 0 10px;
       color: var(--green-main);
-      text-decoration: none;
       font-size: 24px;
     }
 
-    .contact a:hover {
-      color: var(--green-accent);
+    .review-btn {
+      background: var(--green-main);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 10px;
     }
 
-    /* Controls */
-    .controls {
-      margin-bottom: 15px;
+    .review-btn:hover {
+      background: var(--green-accent);
+    }
+
+    .avg-rating {
+      display: inline-block;
+      margin-left: 10px;
+      font-weight: bold;
+      color: var(--green-dark);
+      font-size: 14px;
+    }
+
+    .controls, table {
       background: white;
-      padding: 12px;
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
-    select, input[type="text"] {
-      padding: 6px;
-      margin: 6px 5px 6px 0;
-      border: 1px solid #c8e6c9;
-      border-radius: 5px;
+    .controls {
+      padding: 12px;
+      margin-bottom: 15px;
     }
 
-    select:focus, input:focus {
-      outline: none;
-      border-color: var(--green-main);
-    }
-
-    /* Table */
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
     th {
-      background-color: var(--green-main);
+      background: var(--green-main);
       color: white;
       padding: 10px;
     }
@@ -94,151 +92,201 @@
       border-bottom: 1px solid #e0e0e0;
     }
 
-    tr:hover {
-      background-color: var(--green-light);
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
     }
 
-    a {
-      color: var(--green-main);
-      font-weight: 600;
+    .modal-content {
+      background: white;
+      max-width: 400px;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
     }
 
-    a:hover {
-      color: var(--green-accent);
+    .stars input { display:none; }
+    .stars label {
+      font-size: 30px;
+      cursor: pointer;
+      color: #ccc;
     }
 
-    @media (max-width: 600px) {
-      .contact a {
-        display: inline-block;
-        margin: 8px 5px;
-      }
+    .stars input:checked ~ label,
+    .stars label:hover,
+    .stars label:hover ~ label {
+      color: gold;
+    }
+
+    textarea, input {
+      width: 90%;
+      padding: 6px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 
 <body>
-  <h1>Hiking Trails in Gauteng & North West</h1>
 
-  <!-- Contact Section -->
-  <div class="contact">
-    <a href="https://wa.me/27733242619" target="_blank">
-      <i class="fab fa-whatsapp"></i>
-    </a>
+<h1>Hiking Trails in Gauteng & North West</h1>
 
-    <a href="mailto:vukosikhosa@gmail.com">
-      <i class="fas fa-envelope"></i>
-    </a>
+<div class="contact">
+  <a href="https://wa.me/27733242619" target="_blank"><i class="fab fa-whatsapp"></i></a>
+  <a href="mailto:vukosikhosa@gmail.com"><i class="fas fa-envelope"></i></a>
+  <a href="https://www.instagram.com/the_hiking_Dr" target="_blank"><i class="fab fa-instagram"></i></a>
+  <a href="https://www.youtube.com/@my_outdoor_adventures" target="_blank"><i class="fab fa-youtube"></i></a>
 
-    <a href="https://www.instagram.com/the_hiking_Dr" target="_blank">
-      <i class="fab fa-instagram"></i>
-    </a>
+  <button class="review-btn" onclick="openReview()">⭐ Review Web</button>
+  <span id="avgRating" class="avg-rating">Loading...</span>
+</div>
 
-    <a href="https://www.youtube.com/@my_outdoor_adventures" target="_blank">
-      <i class="fab fa-youtube"></i>
-    </a>
+<div class="controls">
+  <label>Filter by Area:</label>
+  <select id="areaFilter"><option>All</option></select>
+
+  <label>Search:</label>
+  <input type="text" id="searchBox" placeholder="Trail name">
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Trail Name</th>
+      <th>Website</th>
+      <th>Area</th>
+    </tr>
+  </thead>
+  <tbody id="trailTable"></tbody>
+</table>
+
+<!-- Review Modal -->
+<div id="reviewModal" class="modal">
+  <div class="modal-content">
+    <h3>⭐ Review This Website</h3>
+
+    <input id="reviewName" placeholder="Your name">
+
+    <div class="stars">
+      <input type="radio" name="rating" id="r5" value="5"><label for="r5">★</label>
+      <input type="radio" name="rating" id="r4" value="4"><label for="r4">★</label>
+      <input type="radio" name="rating" id="r3" value="3"><label for="r3">★</label>
+      <input type="radio" name="rating" id="r2" value="2"><label for="r2">★</label>
+      <input type="radio" name="rating" id="r1" value="1"><label for="r1">★</label>
+    </div>
+
+    <textarea id="reviewComment" rows="4" placeholder="Your review"></textarea>
+
+    <br>
+    <button class="review-btn" onclick="submitReview()">Submit</button>
+    <button class="review-btn" onclick="closeReview()">Cancel</button>
   </div>
+</div>
 
-  <div class="controls">
-    <label for="areaFilter">Filter by Area:</label>
-    <select id="areaFilter">
-      <option value="All">All</option>
-    </select>
+<script>
+  const REVIEW_API = "https://script.google.com/macros/s/AKfycbxATwQlDs-gu-w6G8CJXZH-caQx7eGjLoAXmBM6XzZBsgB0DTpAz3p-OuF1xDncLKKB1g/exec";
 
-    <label for="searchBox">Search by Name:</label>
-    <input type="text" id="searchBox" placeholder="Enter trail name..." />
-  </div>
+  let trails = [];
+  let currentFilter = "All";
+  let currentSearch = "";
 
-  <table>
-    <thead>
-      <tr>
-        <th>Trail Name</th>
-        <th>Website</th>
-        <th>Area</th>
-      </tr>
-    </thead>
-    <tbody id="trailTable"></tbody>
-  </table>
+  function openReview() {
+    document.getElementById("reviewModal").style.display = "block";
+  }
 
-  <script>
-    let trails = [];
-    let currentFilter = "All";
-    let currentSearch = "";
+  function closeReview() {
+    document.getElementById("reviewModal").style.display = "none";
+  }
 
-    function renderTable() {
-      const tableBody = document.getElementById("trailTable");
-      tableBody.innerHTML = "";
+  function submitReview() {
+    const rating = document.querySelector('input[name="rating"]:checked')?.value;
+    if (!rating) return alert("Please select a rating");
 
-      let filtered = currentFilter === "All"
-        ? trails
-        : trails.filter(t => t.Area === currentFilter);
+    fetch(REVIEW_API, {
+      method: "POST",
+      body: JSON.stringify({
+        name: document.getElementById("reviewName").value || "Anonymous",
+        rating,
+        comment: document.getElementById("reviewComment").value,
+        page: window.location.pathname
+      })
+    }).then(() => {
+      alert("Thank you for your review ⭐");
+      closeReview();
+      loadAverageRating(); // refresh average
+    });
+  }
 
-      if (currentSearch.trim() !== "") {
-        filtered = filtered.filter(t =>
-          t.Name.toLowerCase().includes(currentSearch.toLowerCase())
-        );
-      }
+  function loadAverageRating() {
+    fetch(REVIEW_API)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.average) return;
+        document.getElementById("avgRating").innerText =
+          `⭐ ${data.average.toFixed(1)} (${data.count})`;
+      })
+      .catch(() => {
+        document.getElementById("avgRating").innerText = "⭐ No reviews yet";
+      });
+  }
 
-      if (filtered.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="3">No trails found.</td></tr>`;
-        return;
-      }
+  function renderTable() {
+    const table = document.getElementById("trailTable");
+    table.innerHTML = "";
 
-      filtered.forEach(t => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
+    let filtered = currentFilter === "All"
+      ? trails
+      : trails.filter(t => t.Area === currentFilter);
+
+    if (currentSearch)
+      filtered = filtered.filter(t =>
+        t.Name.toLowerCase().includes(currentSearch.toLowerCase())
+      );
+
+    filtered.forEach(t => {
+      table.innerHTML += `
+        <tr>
           <td>${t.Name}</td>
           <td><a href="${t.Website}" target="_blank">Visit</a></td>
           <td>${t.Area}</td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
-
-    function updateFilterOptions() {
-      const filterSelect = document.getElementById("areaFilter");
-      const areas = ["All", ...new Set(trails.map(t => t.Area))];
-      filterSelect.innerHTML = "";
-      areas.forEach(area => {
-        const opt = document.createElement("option");
-        opt.value = area;
-        opt.textContent = area;
-        filterSelect.appendChild(opt);
-      });
-    }
-
-    function loadExcelFile(file, isLocal = false) {
-      if (isLocal) {
-        const reader = new FileReader();
-        reader.onload = evt => processExcel(evt.target.result);
-        reader.readAsArrayBuffer(file);
-      } else {
-        fetch(file)
-          .then(res => res.arrayBuffer())
-          .then(buffer => processExcel(buffer))
-          .catch(err => console.error("Error loading Excel:", err));
-      }
-    }
-
-    function processExcel(buffer) {
-      const workbook = XLSX.read(buffer, { type: 'array' });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      trails = XLSX.utils.sheet_to_json(sheet);
-      updateFilterOptions();
-      renderTable();
-    }
-
-    document.getElementById("areaFilter").addEventListener("change", e => {
-      currentFilter = e.target.value;
-      renderTable();
+        </tr>`;
     });
+  }
 
-    document.getElementById("searchBox").addEventListener("input", e => {
-      currentSearch = e.target.value;
-      renderTable();
-    });
+  function updateFilters() {
+    const sel = document.getElementById("areaFilter");
+    const areas = ["All", ...new Set(trails.map(t => t.Area))];
+    sel.innerHTML = areas.map(a => `<option>${a}</option>`).join("");
+  }
 
-    // Load Excel from server
-    loadExcelFile("trails.xlsx");
-  </script>
+  function loadExcel() {
+    fetch("trails.xlsx")
+      .then(r => r.arrayBuffer())
+      .then(b => {
+        const wb = XLSX.read(b, { type: "array" });
+        trails = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+        updateFilters();
+        renderTable();
+      });
+  }
+
+  document.getElementById("areaFilter").onchange = e => {
+    currentFilter = e.target.value;
+    renderTable();
+  };
+
+  document.getElementById("searchBox").oninput = e => {
+    currentSearch = e.target.value;
+    renderTable();
+  };
+
+  loadExcel();
+  loadAverageRating();
+</script>
+
 </body>
 </html>
