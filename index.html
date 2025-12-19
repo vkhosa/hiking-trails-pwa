@@ -1,134 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hiking Trails - Gauteng & North West</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hiking Trails - Gauteng & North West</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-  <style>
-    :root {
-      --green-dark: #1b5e20;
-      --green-main: #2e7d32;
-      --green-light: #e8f5e9;
-      --green-accent: #66bb6a;
-    }
+<style>
+:root {
+  --green-dark:#1b5e20;
+  --green-main:#2e7d32;
+  --green-light:#e8f5e9;
+  --green-accent:#66bb6a;
+}
 
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-color: var(--green-light);
-    }
+body {
+  font-family: Arial, sans-serif;
+  background: var(--green-light);
+  margin:20px;
+}
 
-    h1 {
-      text-align: center;
-      color: var(--green-dark);
-    }
+h1 { text-align:center; color:var(--green-dark); }
 
-    .contact {
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 10px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
+.contact {
+  text-align:center;
+  background:white;
+  padding:10px;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
 
-    .contact a {
-      margin: 0 10px;
-      color: var(--green-main);
-      font-size: 24px;
-    }
+.contact a { margin:0 8px; font-size:24px; color:var(--green-main); }
 
-    .review-btn {
-      background: var(--green-main);
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      margin-left: 10px;
-    }
+.review-btn {
+  background:var(--green-main);
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
 
-    .review-btn:hover {
-      background: var(--green-accent);
-    }
+.review-btn:hover { background:var(--green-accent); }
 
-    .avg-rating {
-      display: inline-block;
-      margin-left: 10px;
-      font-weight: bold;
-      color: var(--green-dark);
-      font-size: 14px;
-    }
+.avg-rating {
+  margin-left:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    .controls, table {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
+.controls, table {
+  background:white;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
 
-    .controls {
-      padding: 12px;
-      margin-bottom: 15px;
-    }
+.controls { padding:12px; margin:15px 0; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+table { width:100%; border-collapse:collapse; }
 
-    th {
-      background: var(--green-main);
-      color: white;
-      padding: 10px;
-    }
+th {
+  background:var(--green-main);
+  color:white;
+  padding:10px;
+}
 
-    td {
-      padding: 9px;
-      border-bottom: 1px solid #e0e0e0;
-    }
+td { padding:9px; border-bottom:1px solid #eee; }
 
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 999;
-    }
+/* MODALS */
+.modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  z-index:999;
+}
 
-    .modal-content {
-      background: white;
-      max-width: 400px;
-      margin: 10% auto;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-    }
+.modal-content {
+  background:white;
+  max-width:400px;
+  margin:8% auto;
+  padding:20px;
+  border-radius:8px;
+  text-align:center;
+}
 
-    .stars input { display:none; }
-    .stars label {
-      font-size: 30px;
-      cursor: pointer;
-      color: #ccc;
-    }
+.stars input { display:none; }
+.stars label {
+  font-size:30px;
+  cursor:pointer;
+  color:#ccc;
+}
 
-    .stars input:checked ~ label,
-    .stars label:hover,
-    .stars label:hover ~ label {
-      color: gold;
-    }
+.stars input:checked ~ label,
+.stars label:hover,
+.stars label:hover ~ label { color:gold; }
 
-    textarea, input {
-      width: 90%;
-      padding: 6px;
-      margin-bottom: 10px;
-    }
-  </style>
+textarea,input { width:90%; padding:6px; margin-bottom:10px; }
+
+.review-item {
+  text-align:left;
+  border-bottom:1px solid #eee;
+  padding:8px 0;
+}
+.review-item strong { color:var(--green-dark); }
+</style>
 </head>
 
 <body>
@@ -142,35 +120,28 @@
   <a href="https://www.youtube.com/@my_outdoor_adventures" target="_blank"><i class="fab fa-youtube"></i></a>
 
   <button class="review-btn" onclick="openReview()">⭐ Review Web</button>
-  <span id="avgRating" class="avg-rating">Loading...</span>
+  <span id="avgRating" class="avg-rating" onclick="openReviews()">Loading...</span>
 </div>
 
 <div class="controls">
   <label>Filter by Area:</label>
   <select id="areaFilter"><option>All</option></select>
-
   <label>Search:</label>
   <input type="text" id="searchBox" placeholder="Trail name">
 </div>
 
 <table>
-  <thead>
-    <tr>
-      <th>Trail Name</th>
-      <th>Website</th>
-      <th>Area</th>
-    </tr>
-  </thead>
-  <tbody id="trailTable"></tbody>
+<thead>
+<tr><th>Trail Name</th><th>Website</th><th>Area</th></tr>
+</thead>
+<tbody id="trailTable"></tbody>
 </table>
 
-<!-- Review Modal -->
+<!-- REVIEW FORM MODAL -->
 <div id="reviewModal" class="modal">
   <div class="modal-content">
     <h3>⭐ Review This Website</h3>
-
     <input id="reviewName" placeholder="Your name">
-
     <div class="stars">
       <input type="radio" name="rating" id="r5" value="5"><label for="r5">★</label>
       <input type="radio" name="rating" id="r4" value="4"><label for="r4">★</label>
@@ -178,114 +149,102 @@
       <input type="radio" name="rating" id="r2" value="2"><label for="r2">★</label>
       <input type="radio" name="rating" id="r1" value="1"><label for="r1">★</label>
     </div>
-
     <textarea id="reviewComment" rows="4" placeholder="Your review"></textarea>
-
     <br>
     <button class="review-btn" onclick="submitReview()">Submit</button>
     <button class="review-btn" onclick="closeReview()">Cancel</button>
   </div>
 </div>
 
+<!-- REVIEWS DISPLAY MODAL -->
+<div id="reviewsModal" class="modal">
+  <div class="modal-content">
+    <h3>⭐ User Reviews</h3>
+    <div id="reviewsList"></div>
+    <br>
+    <button class="review-btn" onclick="closeReviews()">Close</button>
+  </div>
+</div>
+
 <script>
-  const REVIEW_API = "https://script.google.com/macros/s/AKfycbxATwQlDs-gu-w6G8CJXZH-caQx7eGjLoAXmBM6XzZBsgB0DTpAz3p-OuF1xDncLKKB1g/exec";
+const REVIEW_API="https://script.google.com/macros/s/AKfycbxATwQlDs-gu-w6G8CJXZH-caQx7eGjLoAXmBM6XzZBsgB0DTpAz3p-OuF1xDncLKKB1g/exec";
 
-  let trails = [];
-  let currentFilter = "All";
-  let currentSearch = "";
+let trails=[];
 
-  function openReview() {
-    document.getElementById("reviewModal").style.display = "block";
-  }
+function openReview(){ reviewModal.style.display="block"; }
+function closeReview(){ reviewModal.style.display="none"; }
 
-  function closeReview() {
-    document.getElementById("reviewModal").style.display = "none";
-  }
-
-  function submitReview() {
-    const rating = document.querySelector('input[name="rating"]:checked')?.value;
-    if (!rating) return alert("Please select a rating");
-
-    fetch(REVIEW_API, {
-      method: "POST",
-      body: JSON.stringify({
-        name: document.getElementById("reviewName").value || "Anonymous",
-        rating,
-        comment: document.getElementById("reviewComment").value,
-        page: window.location.pathname
-      })
-    }).then(() => {
-      alert("Thank you for your review ⭐");
-      closeReview();
-      loadAverageRating(); // refresh average
+function openReviews(){
+  fetch(REVIEW_API)
+  .then(r=>r.json())
+  .then(data=>{
+    const box=document.getElementById("reviewsList");
+    box.innerHTML="";
+    (data.reviews||[]).forEach(r=>{
+      box.innerHTML+=`
+        <div class="review-item">
+          <strong>${r.name}</strong><br>
+          ⭐ ${r.rating}/5<br>
+          ${r.comment}
+        </div>`;
     });
-  }
+    reviewsModal.style.display="block";
+  });
+}
 
-  function loadAverageRating() {
-    fetch(REVIEW_API)
-      .then(r => r.json())
-      .then(data => {
-        if (!data.average) return;
-        document.getElementById("avgRating").innerText =
-          `⭐ ${data.average.toFixed(1)} (${data.count})`;
-      })
-      .catch(() => {
-        document.getElementById("avgRating").innerText = "⭐ No reviews yet";
-      });
-  }
+function closeReviews(){ reviewsModal.style.display="none"; }
 
-  function renderTable() {
-    const table = document.getElementById("trailTable");
-    table.innerHTML = "";
+function submitReview(){
+  const rating=document.querySelector('input[name="rating"]:checked')?.value;
+  if(!rating) return alert("Select rating");
 
-    let filtered = currentFilter === "All"
-      ? trails
-      : trails.filter(t => t.Area === currentFilter);
+  fetch(REVIEW_API,{
+    method:"POST",
+    body:JSON.stringify({
+      name:reviewName.value||"Anonymous",
+      rating,
+      comment:reviewComment.value,
+      page:location.pathname
+    })
+  }).then(()=>{
+    alert("Thank you ⭐");
+    closeReview();
+    loadAverageRating();
+  });
+}
 
-    if (currentSearch)
-      filtered = filtered.filter(t =>
-        t.Name.toLowerCase().includes(currentSearch.toLowerCase())
-      );
+function loadAverageRating(){
+  fetch(REVIEW_API)
+  .then(r=>r.json())
+  .then(d=>{
+    avgRating.innerText=`⭐ ${d.average.toFixed(1)} (${d.count})`;
+  });
+}
 
-    filtered.forEach(t => {
-      table.innerHTML += `
-        <tr>
-          <td>${t.Name}</td>
-          <td><a href="${t.Website}" target="_blank">Visit</a></td>
-          <td>${t.Area}</td>
-        </tr>`;
-    });
-  }
-
-  function updateFilters() {
-    const sel = document.getElementById("areaFilter");
-    const areas = ["All", ...new Set(trails.map(t => t.Area))];
-    sel.innerHTML = areas.map(a => `<option>${a}</option>`).join("");
-  }
-
-  function loadExcel() {
-    fetch("trails.xlsx")
-      .then(r => r.arrayBuffer())
-      .then(b => {
-        const wb = XLSX.read(b, { type: "array" });
-        trails = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-        updateFilters();
-        renderTable();
-      });
-  }
-
-  document.getElementById("areaFilter").onchange = e => {
-    currentFilter = e.target.value;
+function loadExcel(){
+  fetch("trails.xlsx")
+  .then(r=>r.arrayBuffer())
+  .then(b=>{
+    const wb=XLSX.read(b,{type:"array"});
+    trails=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
     renderTable();
-  };
+  });
+}
 
-  document.getElementById("searchBox").oninput = e => {
-    currentSearch = e.target.value;
-    renderTable();
-  };
+function renderTable(){
+  trailTable.innerHTML="";
+  trails.forEach(t=>{
+    trailTable.innerHTML+=`
+      <tr>
+        <td>${t.Name}</td>
+        <td><a href="${t.Website}" target="_blank">Visit</a></td>
+        <td>${t.Area}</td>
+      </tr>`;
+  });
+}
 
-  loadExcel();
-  loadAverageRating();
+loadExcel();
+loadAverageRating();
 </script>
 
 </body>
