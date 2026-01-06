@@ -7,7 +7,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-EDVV848W8Z');
 </script>
 
@@ -136,14 +135,19 @@ textarea,input { width:90%; padding:6px; margin-bottom:10px; }
 
 <div class="controls">
   <label>Filter by Area:</label>
-  <select id="areaFilter"><option>All</option></select>
-  <label>Search:</label>
+  <select id="areaFilter"></select>
+
+  <label style="margin-left:10px;">Search:</label>
   <input type="text" id="searchBox" placeholder="Trail name">
 </div>
 
 <table>
 <thead>
-<tr><th>Trail Name</th><th>Website</th><th>Area</th></tr>
+<tr>
+  <th>Trail Name</th>
+  <th>Website</th>
+  <th>Area</th>
+</tr>
 </thead>
 <tbody id="trailTable"></tbody>
 </table>
@@ -182,25 +186,27 @@ const REVIEW_API="https://script.google.com/macros/s/AKfycbxATwQlDs-gu-w6G8CJXZH
 
 let trails=[];
 
+document.getElementById("areaFilter").addEventListener("change", renderTable);
+document.getElementById("searchBox").addEventListener("input", renderTable);
+
 function openReview(){ reviewModal.style.display="block"; }
 function closeReview(){ reviewModal.style.display="none"; }
 
 function openReviews(){
   fetch(REVIEW_API)
-  .then(r=>r.json())
-  .then(data=>{
-    const box=document.getElementById("reviewsList");
-    box.innerHTML="";
-    (data.reviews||[]).forEach(r=>{
-      box.innerHTML+=`
-        <div class="review-item">
-          <strong>${r.name}</strong><br>
-          ⭐ ${r.rating}/5<br>
-          ${r.comment}
-        </div>`;
+    .then(r=>r.json())
+    .then(data=>{
+      reviewsList.innerHTML="";
+      (data.reviews||[]).forEach(r=>{
+        reviewsList.innerHTML+=`
+          <div class="review-item">
+            <strong>${r.name}</strong><br>
+            ⭐ ${r.rating}/5<br>
+            ${r.comment}
+          </div>`;
+      });
+      reviewsModal.style.display="block";
     });
-    reviewsModal.style.display="block";
-  });
 }
 
 function closeReviews(){ reviewsModal.style.display="none"; }
@@ -226,32 +232,54 @@ function submitReview(){
 
 function loadAverageRating(){
   fetch(REVIEW_API)
-  .then(r=>r.json())
-  .then(d=>{
-    avgRating.innerText=`⭐ ${d.average.toFixed(1)} (${d.count})`;
-  });
+    .then(r=>r.json())
+    .then(d=>{
+      avgRating.innerText=`⭐ ${d.average.toFixed(1)} (${d.count})`;
+    });
 }
 
 function loadExcel(){
   fetch("trails.xlsx")
-  .then(r=>r.arrayBuffer())
-  .then(b=>{
-    const wb=XLSX.read(b,{type:"array"});
-    trails=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-    renderTable();
+    .then(r=>r.arrayBuffer())
+    .then(b=>{
+      const wb=XLSX.read(b,{type:"array"});
+      trails=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+      populateAreaFilter();
+      renderTable();
+    });
+}
+
+function populateAreaFilter(){
+  const areas=[...new Set(trails.map(t=>t.Area).filter(Boolean))].sort();
+  areaFilter.innerHTML='<option value="All">All</option>';
+  areas.forEach(a=>{
+    const opt=document.createElement("option");
+    opt.value=a;
+    opt.textContent=a;
+    areaFilter.appendChild(opt);
   });
 }
 
 function renderTable(){
+  const area=areaFilter.value;
+  const search=searchBox.value.toLowerCase();
+
   trailTable.innerHTML="";
-  trails.forEach(t=>{
-    trailTable.innerHTML+=`
-      <tr>
-        <td>${t.Name}</td>
-        <td><a href="${t.Website}" target="_blank">Visit</a></td>
-        <td>${t.Area}</td>
-      </tr>`;
-  });
+
+  trails
+    .filter(t=>{
+      const areaMatch=area==="All" || t.Area===area;
+      const searchMatch=!search || t.Name?.toLowerCase().includes(search);
+      return areaMatch && searchMatch;
+    })
+    .forEach(t=>{
+      trailTable.innerHTML+=`
+        <tr>
+          <td>${t.Name||""}</td>
+          <td><a href="${t.Website}" target="_blank">Visit</a></td>
+          <td>${t.Area||""}</td>
+        </tr>`;
+    });
 }
 
 loadExcel();
